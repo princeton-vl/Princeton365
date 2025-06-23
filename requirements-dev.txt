@@ -1,0 +1,17 @@
+evo
+mplcursors
+numpy
+opencv-contrib-python
+matplotlib
+scipy
+networkx
+tqdm   
+pyqt5
+g2o-python
+pykalman
+OneEuroFilter
+filterpy
+pyarrow
+h5py
+pomegranate
+requests-toolbelt

@@ -1,0 +1,28 @@
+grid:
+  rows: 5                       # Number of rows of markers on the board
+  cols: 4                       # Number of columns of markers on the board
+  square_length: 0.045          # Length of each square (in meters)
+  marker_separation: 0.007      # Separation between adjacent markers (in meters)
+  total_markers: 20             # Total number of markers
+  dictionary: "DICT_4X4_1000"   # Predefined ArUco dictionary to use
+  num_boards: 50                # Number of different boards to generate
+  ppi: 300                      # Pixels per inch for rendering (print resolution)
+  board_type: "grid"            # Type of board: "grid" or "charuco"
+  paper_size_in: [8.5, 11]      # Size of the paper in inches (width, height)
+  output_dir: "default_grid_boards"  # Directory where images/PDFs will be saved
+  save: false                   # Whether to save the boards to disk
+
+
+charuco:
+  rows: 5
+  cols: 4
+  square_length: 0.045
+  marker_length: 0.03           # Length of the marker side (in meters)
+  total_markers: 10
+  dictionary: "DICT_4X4_1000"
+  num_boards: 100
+  ppi: 300
+  board_type: "charuco"
+  paper_size_in: [8.5, 11]
+  output_dir: "default_charuco_boards"
+  save: false
