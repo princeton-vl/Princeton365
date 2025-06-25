@@ -3,7 +3,7 @@ import cv2
 import subprocess
 import numpy as np
 import argparse
-from core.utils.utils_io import load_config_from_yaml
+from princeton365.utils.utils_io import load_config_from_yaml
 
 
 def generate_charuco_boards(args):
@@ -61,14 +61,18 @@ def create_board(index, args):
     return board
             
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Generate and optionally save or view Charuco/Grid boards")
     
     parser.add_argument("--config", type=str, help="Path to YAML config file")
     parser.add_argument("--board_type", type=str, default="grid", help="Either 'charuco' or 'grid'")
+    
 
     cli_args = parser.parse_args()
 
     args = load_config_from_yaml(cli_args.board_type, cli_args.config)
     generate_charuco_boards(args)
+
+if __name__ == "__main__":
+    main()
 

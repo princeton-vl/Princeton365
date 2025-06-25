@@ -12,7 +12,7 @@ from scipy.spatial.transform import Rotation as R
 from evo.core.trajectory import PoseTrajectory3D
 from evo.tools import plot
 import networkx as nx
-from core.utils.utils_io import estimate_similarity_transformation
+from princeton365.utils.utils_io import estimate_similarity_transformation
 
 def format_pose(frame_idx, world_T_camera):
     '''
@@ -297,118 +297,118 @@ def read_trajectory_file(filename, tum_format=True):
  
 
 
-# This doesnt work
-def debug_frame():
-    text = f"Frame: {frame_idx} - ATE (m): {ate:.4f} - Final Pose Case: {final_pose_case}"
-    for i in range(count_valid):
-        text += f"\nBoard {valid_board_ids[i]} - Reprojection Error (p): {reproj_er[i]:.4f} - Points: {len(board_points['3d'][i])}"
-    for idx, board_instance in enumerate(valid_board_ids):
-        if board_instance is not None:
-            # Current frame's 3D points for this board
-            current_points = board_points["3d"][idx]                        
-            current_points_set = set(tuple(point) for point in current_points)
-            # Check if this board existed in the previous frame
-            if board_instance in hypothesis_2_board_points_previous:
-                previous_points_set = set(
-                    tuple(point) for point in hypothesis_2_board_points_previous[board_instance]
-                )
+# # This doesnt work
+# def debug_frame():
+#     text = f"Frame: {frame_idx} - ATE (m): {ate:.4f} - Final Pose Case: {final_pose_case}"
+#     for i in range(count_valid):
+#         text += f"\nBoard {valid_board_ids[i]} - Reprojection Error (p): {reproj_er[i]:.4f} - Points: {len(board_points['3d'][i])}"
+#     for idx, board_instance in enumerate(valid_board_ids):
+#         if board_instance is not None:
+#             # Current frame's 3D points for this board
+#             current_points = board_points["3d"][idx]                        
+#             current_points_set = set(tuple(point) for point in current_points)
+#             # Check if this board existed in the previous frame
+#             if board_instance in hypothesis_2_board_points_previous:
+#                 previous_points_set = set(
+#                     tuple(point) for point in hypothesis_2_board_points_previous[board_instance]
+#                 )
 
-                # Calculate added and removed points
-                added_points = current_points_set - previous_points_set
-                removed_points = previous_points_set - current_points_set
-                if added_points:
-                    text += f"\nBoard {board_instance}: {len(added_points)} p added."
-                    if removed_points:
-                        text += f"-{len(removed_points)} p removed."
-                elif removed_points:
-                    text += f"\nBoard {board_instance}: {len(removed_points)} p removed."
-                else:
-                    continue
+#                 # Calculate added and removed points
+#                 added_points = current_points_set - previous_points_set
+#                 removed_points = previous_points_set - current_points_set
+#                 if added_points:
+#                     text += f"\nBoard {board_instance}: {len(added_points)} p added."
+#                     if removed_points:
+#                         text += f"-{len(removed_points)} p removed."
+#                 elif removed_points:
+#                     text += f"\nBoard {board_instance}: {len(removed_points)} p removed."
+#                 else:
+#                     continue
 
-            else:
-                # New board instance in the current frame
-                text += f"\nBoard {board_instance}: {len(current_points_set)} points created. "
+#             else:
+#                 # New board instance in the current frame
+#                 text += f"\nBoard {board_instance}: {len(current_points_set)} points created. "
             
-            shortest_path = nx.shortest_path(
-                G, source=valid_board_ids[0], target=board_instance, weight="distance"
-            )
+#             shortest_path = nx.shortest_path(
+#                 G, source=valid_board_ids[0], target=board_instance, weight="distance"
+#             )
 
-            T_local_to_board = np.eye(4)
+#             T_local_to_board = np.eye(4)
 
-            for j in range(len(shortest_path) - 1):
-                # edge_data = next(iter(G[shortest_path[j]][shortest_path[j + 1]].values()))
-                edge_data = G[shortest_path[j]][shortest_path[j + 1]]
-                T_local_to_board = np.dot(T_local_to_board, edge_data["transformation"])
-            translation_vector = T_local_to_board[:3, 3]
-            distance_to_first_board = np.linalg.norm(translation_vector)
-            text += f"-Distance : {distance_to_first_board:.4f} m."
+#             for j in range(len(shortest_path) - 1):
+#                 # edge_data = next(iter(G[shortest_path[j]][shortest_path[j + 1]].values()))
+#                 edge_data = G[shortest_path[j]][shortest_path[j + 1]]
+#                 T_local_to_board = np.dot(T_local_to_board, edge_data["transformation"])
+#             translation_vector = T_local_to_board[:3, 3]
+#             distance_to_first_board = np.linalg.norm(translation_vector)
+#             text += f"-Distance : {distance_to_first_board:.4f} m."
     
-    for previous_board_instance in hypothesis_2_board_points_previous.keys():
-        if previous_board_instance not in valid_board_ids:
+#     for previous_board_instance in hypothesis_2_board_points_previous.keys():
+#         if previous_board_instance not in valid_board_ids:
             
-            previous_points_set = set(
-                tuple(point) for point in hypothesis_2_board_points_previous[previous_board_instance]
-            )
-            text += (
-                f"\nBoard {previous_board_instance}: {len(previous_points_set)} p disappeared."
-            )
+#             previous_points_set = set(
+#                 tuple(point) for point in hypothesis_2_board_points_previous[previous_board_instance]
+#             )
+#             text += (
+#                 f"\nBoard {previous_board_instance}: {len(previous_points_set)} p disappeared."
+#             )
             
-            shortest_path = nx.shortest_path(
-                G, source=valid_board_ids[0], target=previous_board_instance, weight="distance"
-            )
+#             shortest_path = nx.shortest_path(
+#                 G, source=valid_board_ids[0], target=previous_board_instance, weight="distance"
+#             )
 
-            T_local_to_board = np.eye(4)
+#             T_local_to_board = np.eye(4)
 
-            for j in range(len(shortest_path) - 1):
-                # edge_data = next(iter(G[shortest_path[j]][shortest_path[j + 1]].values()))
-                edge_data = G[shortest_path[j]][shortest_path[j + 1]]
-                T_local_to_board = np.dot(T_local_to_board, edge_data["transformation"])
-            translation_vector = T_local_to_board[:3, 3]
-            distance_to_first_board = np.linalg.norm(translation_vector)
-            text += f"-Distance : {distance_to_first_board:.4f} m."
+#             for j in range(len(shortest_path) - 1):
+#                 # edge_data = next(iter(G[shortest_path[j]][shortest_path[j + 1]].values()))
+#                 edge_data = G[shortest_path[j]][shortest_path[j + 1]]
+#                 T_local_to_board = np.dot(T_local_to_board, edge_data["transformation"])
+#             translation_vector = T_local_to_board[:3, 3]
+#             distance_to_first_board = np.linalg.norm(translation_vector)
+#             text += f"-Distance : {distance_to_first_board:.4f} m."
     
-    hypothesis_2_board_points_previous = {
-        valid_board_ids[idx]: board_points["3d"][idx]
-        for idx in range(len(valid_board_ids))
-        if valid_board_ids[idx] is not None
-    }
+#     hypothesis_2_board_points_previous = {
+#         valid_board_ids[idx]: board_points["3d"][idx]
+#         for idx in range(len(valid_board_ids))
+#         if valid_board_ids[idx] is not None
+#     }
         
-    text += f"\nFinal Pose (m): {translation[0]:.4f}, {translation[1]:.4f}, {translation[2]:.4f}"
-    text += f"\nFinal Quat: {quaternion[0]:.4f}, {quaternion[1]:.4f}, {quaternion[2]:.4f}, {quaternion[3]:.4f}"
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 1
-    font_color = (77, 140, 32)
-    thickness = 3
-    line_height = 50
-    lines = text.split("\n")
-    padding = 10
-    background_color = (0, 0, 0)  
-    for i, line in enumerate(lines):
-        text_size = cv2.getTextSize(line, font, font_scale, thickness)[0]
-        text_width, text_height = text_size
-        x, y = 2500, 250 + i * line_height  # Adjust y-coordinate for each line
+#     text += f"\nFinal Pose (m): {translation[0]:.4f}, {translation[1]:.4f}, {translation[2]:.4f}"
+#     text += f"\nFinal Quat: {quaternion[0]:.4f}, {quaternion[1]:.4f}, {quaternion[2]:.4f}, {quaternion[3]:.4f}"
+#     font = cv2.FONT_HERSHEY_SIMPLEX
+#     font_scale = 1
+#     font_color = (77, 140, 32)
+#     thickness = 3
+#     line_height = 50
+#     lines = text.split("\n")
+#     padding = 10
+#     background_color = (0, 0, 0)  
+#     for i, line in enumerate(lines):
+#         text_size = cv2.getTextSize(line, font, font_scale, thickness)[0]
+#         text_width, text_height = text_size
+#         x, y = 2500, 250 + i * line_height  # Adjust y-coordinate for each line
 
-        # Calculate rectangle coordinates
-        top_left = (x - padding, y - text_height - padding)
-        bottom_right = (x + text_width + padding, y + padding)
+#         # Calculate rectangle coordinates
+#         top_left = (x - padding, y - text_height - padding)
+#         bottom_right = (x + text_width + padding, y + padding)
 
-        # Draw the background rectangle
-        cv2.rectangle(frame, top_left, bottom_right, background_color, -1)  # -1 fills the rectangle
+#         # Draw the background rectangle
+#         cv2.rectangle(frame, top_left, bottom_right, background_color, -1)  # -1 fills the rectangle
 
-        # Draw the text over the rectangle
-        cv2.putText(
-            frame,
-            line,
-            (x, y),
-            font,
-            font_scale,
-            font_color,
-            thickness,
-        )
-    dot_images = cv2.resize(
-        dot_images, dim, interpolation=cv2.INTER_AREA
-    )
-    out_comparison.write(dot_images)
+#         # Draw the text over the rectangle
+#         cv2.putText(
+#             frame,
+#             line,
+#             (x, y),
+#             font,
+#             font_scale,
+#             font_color,
+#             thickness,
+#         )
+#     dot_images = cv2.resize(
+#         dot_images, dim, interpolation=cv2.INTER_AREA
+#     )
+#     out_comparison.write(dot_images)
 
 
 

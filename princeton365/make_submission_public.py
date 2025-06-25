@@ -37,7 +37,7 @@ def verify_code(upload_id, code, url=f"{website}/verify"):
         print(response)
         exit(1)
 
-def make_submission_public(upload_id,  url=f"{website}/modify"):
+def make_submission_public(upload_id, args, url=f"{website}/modify"):
     data = {
         'method_name': args.method_name,
         'publication': args.publication,
@@ -66,17 +66,7 @@ def compress_folder(path):
     os.system(f"tar -cvzf - {path} | split -a 4 -b 512M -d - {tmp_folder}/submission.tar.gz.")
     return tmp_folder
 
-def main(args):
-    upload_id = request_verification(args)
-    if upload_id:
-        code = input("Please enter the verification code sent to your email: ")
-
-        if verify_code(upload_id, code):
-            make_submission_public(upload_id)
-        else:
-            print("Verification failed. Upload not allowed.")
-
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--id", help="Upload ID", required=True)
     parser.add_argument("--email", help="Email address to send verification code to", required=True)
@@ -89,4 +79,15 @@ if __name__ == "__main__":
     parser.add_argument("--stereo", help="Whether the method uses STEREO data", action="store_true")
                  
     args = parser.parse_args()
-    main(args)
+    
+    upload_id = request_verification(args)
+    if upload_id:
+        code = input("Please enter the verification code sent to your email: ")
+
+        if verify_code(upload_id, code):
+            make_submission_public(upload_id, args)
+        else:
+            print("Verification failed. Upload not allowed.")
+
+if __name__ == "__main__":
+    main()

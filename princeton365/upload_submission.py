@@ -94,7 +94,14 @@ def compress_folder(path):
     os.system(f"tar -cvzf - {path} | split -a 4 -b 512M -d - {tmp_folder}/submission.tar.gz.")
     return tmp_folder
 
-def main(args):
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--email", help="Email address to send verification code to", required=True)
+    parser.add_argument("--path", help="Submission path", required=True)
+    parser.add_argument("--method_name", help="Method name that will be displayed in the leaderboard", default='RAFT')
+                        
+    args = parser.parse_args()
+    
     tmp_folder = compress_folder(args.path)
     upload_id = request_verification(args)
 
@@ -107,10 +114,4 @@ def main(args):
             print("Verification failed. Upload not allowed.")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--email", help="Email address to send verification code to", required=True)
-    parser.add_argument("--path", help="Submission path", required=True)
-    parser.add_argument("--method_name", help="Method name that will be displayed in the leaderboard", default='RAFT')
-                        
-    args = parser.parse_args()
-    main(args)
+    main()

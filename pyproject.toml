@@ -1,0 +1,72 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "princeton365"
+dynamic = ["version"]
+description = "Princeton365: A Diverse Dataset with Accurate Camera Pose"
+readme = "README.md"
+maintainers = [
+    {name = "Karhan Kayan", email = "kk2285@princeton.edu"},
+    {name = "Stamatis Alexandropoulos", email = "sa6924@princeton.edu"},
+]
+license = {file = "LICENSE"}
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "princeton365/_version.py"
+
+requires-python = ">=3.8"
+dependencies = [
+    "tqdm",
+    "requests-toolbelt",
+]
+
+[project.optional-dependencies]
+dev = [
+    "evo",
+    "mplcursors",
+    "numpy",
+    "opencv-contrib-python",
+    "matplotlib",
+    "scipy",
+    "networkx",
+    "tqdm",
+    "pyqt5",
+    "g2o-python",
+    "pykalman",
+    "OneEuroFilter",
+    "filterpy",
+    "pyarrow",
+    "h5py",
+    "pomegranate",
+    "requests-toolbelt",
+]
+
+[project.urls]
+Homepage = "https://princeton365.cs.princeton.edu/"
+Repository = "https://github.com/Princeton-VL/Princeton365"
+Paper = "https://arxiv.org/abs/2506.09035"
+
+[project.scripts]
+princeton365-board-generator = "princeton365.board_generator:main"
+princeton365-generate-gt = "princeton365.generate_gt:main"
+princeton365-relative-pose = "princeton365.relative_pose:main"
+princeton365-evaluate = "princeton365.evaluation:main"
+princeton365-upload = "princeton365.upload_submission:main"
+princeton365-make-public = "princeton365.make_submission_public:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["princeton365"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/princeton365",
+    "/scripts", 
+    "/media",
+    "/README.md",
+    "/LICENSE",
+] 

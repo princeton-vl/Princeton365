@@ -2,9 +2,9 @@ import os
 import argparse
 import numpy as np
 import subprocess
-from core.utils.utils_graph import load_graph, convert_multidigraph_to_digraph, extract_poses
-from core.utils.utils_io import get_undistorted_camera_matrix, serialize_intrinsics, read_rotation_from_json, rotation_matrix_from_angles_insta360
-from core.optimization.graph_optimization import pose_graph_optimization
+from princeton365.utils.utils_graph import load_graph, convert_multidigraph_to_digraph, extract_poses
+from princeton365.utils.utils_io import get_undistorted_camera_matrix, serialize_intrinsics, read_rotation_from_json, rotation_matrix_from_angles_insta360
+from princeton365.optimization.graph_optimization import pose_graph_optimization
 
 def main():
     parser = argparse.ArgumentParser(description="Example script building paths for intrinsics, detected points, etc.")
@@ -45,7 +45,7 @@ def main():
     initial_guess = ' '.join(str(x) for x in initial_guess)
     
     # Bundle Rig PnP
-    cpp_program_path = "core/optimization/rig_bundle_pnp/build/optimize_rig"
+    cpp_program_path = "princeton365/optimization/rig_bundle_pnp/build/optimize_rig"
     command = [cpp_program_path, args.gt_detected_points, args.user_detected_points, gt_camera_matrix_str, gt_dist_coeffs_str, user_camera_matrix_str, user_dist_coeffs_str, board_data_str, args.gt_trajectory, initial_guess]
     try:       
         result = subprocess.run(

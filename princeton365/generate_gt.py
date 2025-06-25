@@ -4,13 +4,13 @@ import argparse
 import subprocess
 import numpy as np
 from tqdm import tqdm
-from core.utils.utils_io import load_config_from_yaml, get_result_save_path, serialize_intrinsics, get_undistorted_camera_matrix, save_board_points_to_json
-from core.utils.utils_aruco import detect_pose, multiboard_pnp, estimate_relative_pose, undistort_frame
-from core.utils.utils_graph import convert_multidigraph_to_digraph, median_edge_selection, get_valid_boards, get_root_board_index, save_graph, plot_graph, load_graph, snap_coordinate_systems, extract_poses
-from core.utils.utils_trajectory import parse_trajectory, save_trajectory_evo, plot_trajectory_evo, format_pose, build_pose_graph_camera_trajectory_path
+from princeton365.utils.utils_io import load_config_from_yaml, get_result_save_path, serialize_intrinsics, get_undistorted_camera_matrix, save_board_points_to_json
+from princeton365.utils.utils_aruco import detect_pose, multiboard_pnp, estimate_relative_pose, undistort_frame
+from princeton365.utils.utils_graph import convert_multidigraph_to_digraph, median_edge_selection, get_valid_boards, get_root_board_index, save_graph, plot_graph, load_graph, snap_coordinate_systems, extract_poses
+from princeton365.utils.utils_trajectory import parse_trajectory, save_trajectory_evo, plot_trajectory_evo, format_pose, build_pose_graph_camera_trajectory_path
 from collections import deque, defaultdict
-from core.board_generator import generate_charuco_boards  
-from core.optimization.graph_optimization import pose_graph_optimization
+from princeton365.board_generator import generate_charuco_boards  
+from princeton365.optimization.graph_optimization import pose_graph_optimization
 import evo.tools.file_interface as file_interface
 import networkx as nx
 
@@ -265,7 +265,7 @@ class Princeton365:
         camera_matrix_close, _ = get_undistorted_camera_matrix(camera_matrix_close, dist_coeffs_close, 2160, 3840)
         camera_matrix_close_str, dist_coeffs_close_str = serialize_intrinsics(camera_matrix_close, None)
 
-        cpp_program_path = "core/optimization/bundle_pnp/build/board_experiment"
+        cpp_program_path = "princeton365/optimization/bundle_pnp/build/board_experiment"
         command = [cpp_program_path, camera_matrix_str, dist_coeffs_str, camera_trajectory, board_data_str, graph_camera_trajectory, detected_points_camera, detected_points_graph, camera_matrix_close_str, dist_coeffs_close_str]
         try:       
             result = subprocess.run(
@@ -306,7 +306,7 @@ class Princeton365:
 
         
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Generate and optionally save or view Charuco/Grid boards")
     
     parser.add_argument("--video", type=str, default="video.mp4", help="Path to input video file")
@@ -315,7 +315,7 @@ if __name__ == "__main__":
     parser.add_argument("--snap", action="store_true", help="Snap the pose graph")
     parser.add_argument("--skip_camera_poses", action="store_true", help="Skip calculation of camera poses")
     parser.add_argument("--bundle_pnp", action="store_true", help="Bundle adjustment using PnP")
-    parser.add_argument("--config", type=str, default = "core/configs/board_configs.yaml", help="Path to YAML config file for board generation")
+    parser.add_argument("--config", type=str, default = "princeton365/configs/board_configs.yaml", help="Path to YAML config file for board generation")
     parser.add_argument("--board_type", type=str, default="grid", help="Either 'charuco' or 'grid'")
     parser.add_argument("--output_path", type=str, default = None, help="Path to save the outputs")
     parser.add_argument("--debug", action="store_true", help="Enable debugging mode")
@@ -324,3 +324,6 @@ if __name__ == "__main__":
     
     pipeline = Princeton365(args)
     pipeline.run()
+
+if __name__ == "__main__":
+    main()

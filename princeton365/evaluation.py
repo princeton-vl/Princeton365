@@ -13,9 +13,9 @@ from evo.core import geometry
 import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation as R
 from evo.core.trajectory import PoseTrajectory3D
-from core.utils import utils_depth as dd
-from core.utils.utils_trajectory import plot_trajectory_evo, align_rotations, align_positions, diagnose_trajectories, parse_trajectory, pad_trajectory_with_nans, read_trajectory_file
-from core.utils.utils_io import plot_flow_histogram, rotation_distance, estimate_similarity_transformation
+from princeton365.utils import utils_depth as dd
+from princeton365.utils.utils_trajectory import plot_trajectory_evo, align_rotations, align_positions, diagnose_trajectories, parse_trajectory, pad_trajectory_with_nans, read_trajectory_file
+from princeton365.utils.utils_io import plot_flow_histogram, rotation_distance, estimate_similarity_transformation
 
 np.random.seed(0)
 torch.manual_seed(0)
@@ -227,7 +227,7 @@ def calculate_flow_auc(flows_per_frame, resolution, output_path):
     
     return auc
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--gt_path', type=str, required=True, help='The file path for the gt TXT trajectory (60 fps).')
@@ -389,4 +389,7 @@ if __name__ == '__main__':
 
     with open(output_metrics_path, 'w') as f:
         json.dump(output_metrics, f)
+
+if __name__ == '__main__':
+    main()
 

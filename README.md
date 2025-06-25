@@ -30,6 +30,7 @@
   </a>
 </p>
 
+
 ## Citation
 If you use our benchmark, data, or method in your work, please cite our paper:
 ```
@@ -53,11 +54,27 @@ Please download the dataset from our [website](https://princeton365.cs.princeton
 
 ### Installation
 
-You need to install a few packages to submit your results: 
+For basic functionality (submitting results):
 ```bash 
-conda create --name princeton365
+conda create --name princeton365 python=3.10
 conda activate princeton365
-pip install -r requirements.txt
+pip install .
+```
+
+For development with ground truth generation capabilities:
+```bash
+conda create --name princeton365 python=3.10
+conda activate princeton365
+pip install ".[dev]"
+```
+
+You can also install the package from PyPI:
+```bash
+pip install princeton365
+```
+or 
+```bash 
+pip install princeton365[dev]
 ```
 
 
@@ -71,7 +88,7 @@ To evaluate your model on the test set, you need to submit your results to our e
 Submit your predictions to the evaluation server using the command below. Replace the placeholders:
 
 ```bash
-python3 upload_submission.py \
+princeton365-upload \
     --email your_email \
     --path path_to_your_submission_folder \
     --method_name your_method_name
@@ -86,7 +103,7 @@ Upon submission, you will receive a unique submission ID, which serves as the id
 To make your submission public, run:
 
 ```bash
-python3 make_submission_public.py \
+princeton365-make-public \
     --id submission_id \
     --email your_email \
     --anonymous False \
@@ -124,10 +141,9 @@ Follow the steps below to set up the required environment:
 ```bash
 conda create --name princeton365
 conda activate princeton365
-pip install -r requirements-dev.txt
+pip install ".[dev]"
 sudo apt-get install python3-tk
 sudo apt-get install python3-pil.imagetk
-pip install --upgrade opencv-python opencv-contrib-python
 ```
 
 You need a **different environment** to run Bundle PnP. Please install the following: 
@@ -136,7 +152,7 @@ conda create --name bundle_pnp
 conda activate bundle_pnp
 conda install -c conda-forge ceres-solver cxx-compiler c-compiler
 conda install -c conda-forge zlib
-cd core/optimization/bundle_pnp
+cd princeton365/optimization/bundle_pnp
 mkdir build
 cd build
 cmake -DMETIS_LIBRARY=/path/to/libmetis.so -DMETIS_INCLUDE_DIR=/path/to/metis/include ..
@@ -146,7 +162,7 @@ cd ../../../..
 
 To install Bundle Rig PnP to compute relative pose between two views, run the following commands: 
 ```bash 
-cd core/optimization/rig_bundle_pnp
+cd princeton365/optimization/rig_bundle_pnp
 mkdir build
 cd build
 cmake -DMETIS_LIBRARY=/path/to/libmetis.so -DMETIS_INCLUDE_DIR=/path/to/metis/include ..
@@ -187,9 +203,9 @@ To generate the calibration boards (either grid or ChArUco), use the following c
 
 ```bash
 conda activate princeton365
-python3 -m core.board_generator --config core/configs/board_configs.yaml --board_type '<type>'
+princeton365-board-generator --config princeton365/configs/board_configs.yaml --board_type '<type>'
 ```
-Replace <type> with the desired board type, such as 'grid' or 'charuco'. You can customize the board parameters by editing the `configs/board_configs.yaml` file to suit your needs.
+Replace <type> with the desired board type, such as 'grid' or 'charuco'. You can customize the board parameters by editing the `princeton365/configs/board_configs.yaml` file to suit your needs.
 
 Print these boards and place them completely flat on a surface. The local 3D board coordinates assume that the markers are on a flat plane. This can be ensured cheaply by gluing the paper boards on a flat cardboard. Higher precision techniques such as printing on ceramic or aluminum surfaces can also be used. 
 
@@ -203,7 +219,7 @@ Run the following command on a close-up video of the calibration board to genera
 
 ```bash
 conda activate princeton365
-python3 -m core.generate_gt \
+princeton365-generate-gt \
     --video <close_up_video> \
     --intrinsics <intrinsics_folder> \
     --board_type <'grid' or 'charuco'>
@@ -219,7 +235,7 @@ Use the pose graph from the close-up video to generate the trajectory for the ma
 
 ```bash
 conda activate princeton365
-python3 -m core.generate_gt \
+princeton365-generate-gt \
     --video <gt_view_video> \
     --intrinsics <intrinsics_folder> \
     --board_type <'grid' or 'charuco'> \
@@ -239,7 +255,7 @@ This utility script finds the relative pose between two views (e.g., ground-trut
 
 ```bash
 conda activate princeton365
-python3 -m core.relative_pose \
+princeton365-relative-pose \
     --gt_trajectory <path_to_gt_trajectory_txt> \
     --gt_detected_points <path_to_gt_detected_points_json> \
     --user_detected_points <path_to_user_detected_points_json> \
