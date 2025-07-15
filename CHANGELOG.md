@@ -1,5 +1,12 @@
 # Changelog
 
+
+### v0.3.0
+
+- Release dataset on Huggingface. 
+- Add instructions and scripts for downloading from Huggingface.
+
+
 ### v0.2.0
 
 - Set up python package with hatch-vcs for git-based versioning

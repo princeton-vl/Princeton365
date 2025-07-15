@@ -46,7 +46,9 @@ If you use our benchmark, data, or method in your work, please cite our paper:
 ```
 
 ## Downloading the Dataset
-Please download the dataset from our [website](https://princeton365.cs.princeton.edu/download/). The test set does not contain ground-truth and should be submitted to our evaluation server.  
+You can download our dataset from Google Drive or [Huggingface](https://huggingface.co/datasets/pvl-lab/princeton365). We recommend Huggingface due to lower rate limits. 
+1. To download from Google Drive, please follow the instructions on our [website](https://princeton365.cs.princeton.edu/download/). 
+2. To download from Huggingface, please follow the instructions [here](docs/README_download.md).
 
 
 
