@@ -23,6 +23,8 @@ requires-python = ">=3.8"
 dependencies = [
     "tqdm",
     "requests-toolbelt",
+    "h5py",
+    "huggingface_hub" 
 ]
 
 [project.optional-dependencies]
