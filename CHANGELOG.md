@@ -1,6 +1,10 @@
 # Changelog
 
 
+### v0.3.2
+- Update org name to princeton-vl on Huggingface.
+
+
 ### v0.3.0
 
 - Release dataset on Huggingface. 

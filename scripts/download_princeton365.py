@@ -293,8 +293,8 @@ Examples:
         """
     )
     
-    parser.add_argument("--repo-id", default="pvl-lab/princeton365-updated-webdataset",
-                      help="HuggingFace repository ID (default: pvl-lab/princeton365-updated-webdataset)")
+    parser.add_argument("--repo-id", default="princeton-vl/princeton365-updated-webdataset",
+                      help="HuggingFace repository ID (default: princeton-vl/princeton365-updated-webdataset)")
     
     parser.add_argument("--split", default="all",
                       help="Dataset split to download (default: all - downloads all available splits)")
