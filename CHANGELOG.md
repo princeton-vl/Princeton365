@@ -1,6 +1,10 @@
 # Changelog
 
 
+### v0.3.3
+- Fix citation
+
+
 ### v0.3.2
 - Update org name to princeton-vl on Huggingface.
 
