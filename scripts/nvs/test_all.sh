@@ -1,38 +1,31 @@
-
-
 #!/bin/bash
+set -euo pipefail
+PARENT="/path/to/outputs"   # where ns-train wrote run dirs
+METRICS_NAME="metrics.json" # name of the metrics file to write
 
-parent=/path/to/outputs
-
-# Check if a directory is provided
-if [ -z "$parent" ]; then
-    echo "Usage: $0 <directory>"
-    exit 1
+if [[ ! -d "$PARENT" ]]; then
+  echo "ERROR: outputs directory not found: $PARENT" >&2
+  exit 1
 fi
 
-# Get absolute path of the directory
-DIR=$(realpath "$parent")
-
-# Check if the directory exists
-if [ ! -d "$DIR" ]; then
-    echo "Error: Directory '$DIR' not found!"
-    exit 1
+if command -v conda >/dev/null 2>&1; then
+  NS_EVAL=(conda run -n nerfstudio --no-capture-output ns-eval)
+else
+  NS_EVAL=(ns-eval) 
 fi
 
-## Find directories that contain a "config.yml" file directly under them
-#find "$DIR" -type d -exec sh -c '[ -f "$1/config.yml" ] && echo "$1"' _ {} \;
+echo "Scanning for runs under: $PARENT"
+find "$PARENT" -type f -name "config.yml" -print0 | while IFS= read -r -d '' CFG; do
+  DIR="$(dirname "$CFG")"
+  OUT_DIR="$DIR/eval"
+  METRICS="$OUT_DIR/$METRICS_NAME"
 
-# Loop through all subdirectories
-# Find all directories containing a "config.yml" file
-dirs=()
-for config_file in $(find "$DIR" -type f -name "config.yml"); do
-    dir=$(dirname "$config_file")
-    dirs+=("$dir")
+  echo "[EVAL] $DIR"
+  mkdir -p "$OUT_DIR"
+  "${NS_EVAL[@]}" \
+    --load-config "$CFG" \
+    --output-path "$METRICS" \
+    --render-output-path "$OUT_DIR"
 done
 
-# Print the directories
-for dir in "${dirs[@]}"; do
-    echo "$dir"
-    mkdir "$dir/eval"
-    ns-eval --load-config "$dir/config.yml" --output-path "$dir/eval/metrics.json" --render-output-path "$dir/eval"
-done
+echo "Done."

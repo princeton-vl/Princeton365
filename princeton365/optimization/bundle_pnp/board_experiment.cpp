@@ -244,13 +244,6 @@ std::vector<TumData> parseTumFile(const std::string& filepath) {
             entry.qz = angle_axis.axis()[2] * angle_axis.angle(); // az
             entry.qw = 0.0; // No longer needed
 
-            // Eigen::Quaterniond quaternion(entry.qw, entry.qx, entry.qy, entry.qz);
-            // Eigen::AngleAxisd angle_axis(quaternion);
-
-            // entry.qx = angle_axis.axis()[0]; //* angle_axis.angle(); // ax
-            // entry.qy = angle_axis.axis()[1]; //* angle_axis.angle(); // ay
-            // entry.qz = angle_axis.axis()[2]; //* angle_axis.angle(); // az
-            // entry.qw = 0.0; // No longer needed
         }
         tum_entries.push_back(entry);
     }
@@ -346,12 +339,6 @@ Eigen::Quaterniond AngleAxisToQuaternion(const double* angle_axis) {
 void SaveOptimizedPoses(const std::vector<double>& frame_poses, size_t num_frames, const std::string& base_filename) {
     // Insert "global_optimized_" before "final_pose_scenario" in base_filename
     std::string output_filename = base_filename;
-    // size_t pos = output_filename.find("final_pose_scenario");
-    // if (pos != std::string::npos) {
-    //     output_filename.insert(pos, "global_optimized_");
-    // } else {
-    //     throw std::runtime_error("Error: 'final_pose_scenario' not found in the provided filename.");
-    // }
 
     // Open file for writing
     std::ofstream file(output_filename);
@@ -488,9 +475,6 @@ int main(int argc, char** argv)
     // --------------------------------------------
     // 2.2) Add residuals
     // --------------------------------------------
-
-    //   std::vector<std::vector<Detection2D>> all_detections(num_frames);
-
     for (size_t frame_idx = 0; frame_idx < detected_points_camera.size(); frame_idx++) {
         for (const auto& board : detected_points_camera[frame_idx].boards) {
             std::string board_id_str = board.board_id;
@@ -522,7 +506,6 @@ int main(int argc, char** argv)
                 detection.p_local[0] = point_3d[0];
                 detection.p_local[1] = point_3d[1];
                 detection.p_local[2] = point_3d[2];
-                //   all_detections[frame_idx].push_back(detection);
         
                 // Add reprojection residual
                 auto* cost_function = DistortedReprojError::Create(
@@ -531,33 +514,9 @@ int main(int argc, char** argv)
                                             nullptr,
                                         &frame_poses[detected_points_camera[frame_idx].frame_idx * 6],
                                         &board_poses[board_index * 6]);
-                // problem.AddResidualBlock(cost_function,
-                //                             nullptr,
-                //                         &frame_poses[frame_idx * 6],
-                //                         &board_poses[board_index * 6]);
-                // // Calculate residual for printing
-                // double residual[2];
-                // double camera_params[6], board_params[6];
-                // std::copy(&frame_poses[frame_idx * 6], &frame_poses[frame_idx * 6 + 6], camera_params);
-                // std::copy(&board_poses[board_index * 6], &board_poses[board_index * 6 + 6], board_params);
-
-                // std::cout<< "--------------------------------------------\n";
-
-                // DistortedReprojError error(detection.u, detection.v, detection.p_local, known_intr);
-                // error(camera_params, board_params, residual);
-                
-                // // Print reprojection error
-                // std::cout << "Frame: " << frame_idx << ", Board: " << board_id
-                //         << ", Point: " << point_idx << "\n"
-                //         <<" 3d: [" << point_3d[0] << ", " << point_3d[1] << ", " << point_3d[2] << "]\n"
-                //         << ", 2d: [" << point_2d[0] << ", " << point_2d[1] << "]\n"
-                //         << "Frame Pose: [" << camera_params[0] << ", " << camera_params[1] << ", " << camera_params[2] << ", " << camera_params[3] << ", " << camera_params[4] << ", " << camera_params[5] << "]\n"
-                //         << "Board Pose: [" << board_params[0] << ", " << board_params[1] << ", " << board_params[2] << ", " << board_params[3] << ", " << board_params[4] << ", " << board_params[5] << "]\n"
-                //         << ", Residual: [" << residual[0] << ", " << residual[1] << "]\n";
  
             }
         }
-        // break;
     }
     
     for (size_t frame_idx = 0; frame_idx < detected_points_graph.size();frame_idx++) {
@@ -583,7 +542,6 @@ int main(int argc, char** argv)
                 detection.p_local[0] = point_3d[0];
                 detection.p_local[1] = point_3d[1];
                 detection.p_local[2] = point_3d[2];
-                //   all_detections[frame_idx].push_back(detection);
 
                 // Add reprojection residual
                 auto* cost_function = DistortedReprojError::Create(
@@ -604,7 +562,6 @@ int main(int argc, char** argv)
 
     ceres::Solver::Options options;
     options.max_num_iterations = 30;
-    // options.linear_solver_type = ceres::SPARSE_NORMAL_CHOLESKY;
     options.linear_solver_type = ceres::DENSE_SCHUR;
     options.minimizer_progress_to_stdout = true;
 
@@ -618,18 +575,5 @@ int main(int argc, char** argv)
 
     std::cout << summary.FullReport() << "\n";
     SaveOptimizedPoses(frame_poses, N, argv[3]);
-
-
-
-    // Print residuals
-    // std::cout << "Residuals:\n";
-    // std::cout << residuals.size() << "\n";
-    // for (size_t i = 0; i < 10; ++i) {
-    //     std::cout << "  Residual " << i << ": " << residuals[i] << "\n";
-    // }
-
-    // PrintOptimizedCameraPoses(frame_poses, num_frames);
-    // PrintOptimizedBoardPoses(board_poses, num_boards);
-
     return 0;
 }

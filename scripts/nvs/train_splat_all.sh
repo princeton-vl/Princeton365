@@ -1,5 +1,9 @@
-for scene_id in 51 98 129 131 154
-do
-  sbatch train_single_sbatch.sh "train_ours_splat_single.sh" "./data/new_scanning_user_view_${scene_id}/"
-done
+#!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DATA_BASE="/path/to/data/base"
 
+
+for scene_id in 35 51 98 129 131 154; do
+  DATA_DIR="${DATA_BASE}/new_scanning_${scene_id}"
+  sbatch "$SCRIPT_DIR/train_splat_single.sh" "$DATA_DIR"
+done

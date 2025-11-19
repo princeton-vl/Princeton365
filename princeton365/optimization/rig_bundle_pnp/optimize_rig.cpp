@@ -145,7 +145,6 @@ std::vector<Obs> ReadObservationsFromJson(const std::vector<std::string>& filena
             board_id = -1; // Or some default value
         }
     }
-      // Get 2D and 3D point arrays (now they're arrays of arrays)
       const auto& points_2d = group["2d"];
       const auto& points_3d = group["3d"];
       
@@ -368,7 +367,6 @@ static void ComparePose6D(const double* transformGT, const double* transformEst)
     aaOut[2] = -aaIn[2];
   };
   auto axisAngleMultiply = [&](const double* A, const double* B, double* AB){
-    // AB = A * B in angle-axis. We'll do a matrix-based approach for simplicity
     auto toMat = [&](const double* ax, double M[9]){
       double th = length3(ax);
       double x=0, y=0, z=0;
@@ -454,7 +452,6 @@ static std::vector<double> parseTumFile(const std::string& filename)
       for (int i = 0; i < 6; i++) {
         out.push_back(nan_val);
       }
-      // std::cerr << "Skipping invalid TUM line: " << line << "\n";
       continue;
     }
 
@@ -463,7 +460,6 @@ static std::vector<double> parseTumFile(const std::string& filename)
     Eigen::Quaterniond q_inv = q.inverse();
     Eigen::Vector3d t_inv = -(q_inv * t);
 
-    // to angle-axis
     Eigen::AngleAxisd aa(q_inv);
     double rx = aa.axis()[0] * aa.angle();
     double ry = aa.axis()[1] * aa.angle();
@@ -618,16 +614,13 @@ int main(int argc, char** argv)
     cam0_T_cam1_init[i] = cam0_T_cam1_est[i];
   }
 
-  // Build the ceres problem
   ceres::Problem problem;
   
-  // Add parameter blocks for each board
   for (auto& [board_id, board_pose_est] : world_T_boards_est) {
     problem.AddParameterBlock(board_pose_est.data(), 6);
     problem.SetParameterBlockConstant(board_pose_est.data());
   }
   
-  // Add parameter blocks for camera poses
   for(int f=0; f<numFrames; f++){
     int start_index = f * 6;
     bool hasNan = false;
@@ -643,7 +636,6 @@ int main(int argc, char** argv)
     problem.AddParameterBlock(&cam0_T_world_est[start_index], 6);
   }
   
-  // Add parameter block for camera offset
   problem.AddParameterBlock(cam0_T_cam1_est, 6);
 
   // Add residual blocks
