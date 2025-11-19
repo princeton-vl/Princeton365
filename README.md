@@ -34,13 +34,14 @@
 ## Citation
 If you use our benchmark, data, or method in your work, please cite our paper:
 ```
-@InProceedings{princeton365,
-    author    = {Kayan, Karhan and Alexandropoulos, Stamatis and Jain, Rishabh and Zuo, Yiming and Liang, Erich and Deng, Jia},
-    title     = {Princeton365: A Diverse Dataset with Accurate Camera Pose},
-    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
-    month     = {October},
-    year      = {2025},
-    pages     = {7645-7654}
+@misc{princeton365,
+      title={Princeton365: A Diverse Dataset with Accurate Camera Pose}, 
+      author={Karhan Kayan and Stamatis Alexandropoulos and Rishabh Jain and Yiming Zuo and Erich Liang and Jia Deng},
+      year={2025},
+      eprint={2506.09035},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2506.09035}, 
 }
 ```
 
